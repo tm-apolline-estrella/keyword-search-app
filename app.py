@@ -6,6 +6,23 @@ from src.helpers.search import search
 
 import streamlit as st
 
+# Custom CSS to change the border color to blue when focused
+custom_css = """
+<style>
+/* Change input box border color when focused */
+stTextInput input:focus {
+    border-color: blue !important;
+}
+
+/* Change select box border color when focused */
+stSelectbox select:focus {
+    border-color: blue !important;
+}
+</style>
+"""
+
+st.markdown(custom_css, unsafe_allow_html=True)
+
 # Function to perform the search and update the results
 def perform_search():
     if st.session_state.query:  # Only search if there is a query
@@ -23,6 +40,8 @@ def get_next_page():
         pass
     else:
         st.session_state.current_page += 1
+
+st.title("Keyword Search")
 
 # Check if PDF texts are already loaded in session state
 if 'pdf_texts' not in st.session_state:
@@ -54,6 +73,7 @@ with col2:
 
 # Perform the search based on the current query and algorithm
 search_results = search(st.session_state.query, st.session_state.pdf_texts, mode=st.session_state.search_algorithm)
+total_search_result_count = len(search_results)
 
 # Get number of search results per page
 search_results_per_page = 15
@@ -62,7 +82,6 @@ search_results_per_page = 15
 if 'current_page' not in st.session_state:
     st.session_state.current_page = 0
 
-total_search_result_count = len(search_results)
 total_page_count = (total_search_result_count + search_results_per_page - 1) // search_results_per_page
 
 start_index = st.session_state.current_page * search_results_per_page
@@ -70,7 +89,7 @@ end_index = start_index + search_results_per_page
 
 st.write(f":blue[{total_search_result_count} search results found.]")
 
-if st.session_state.search_results != {}:
+if search_results != {}:
     displayed_search_results = list(search_results.items())
     
     # Apply slicing to get the desired chunk of results
@@ -84,9 +103,9 @@ if st.session_state.search_results != {}:
 
         with container:
             # st.subheader(file_name)
-            st.markdown(f"<h5 style='margin: 0;'>{file_name}</h5>", unsafe_allow_html=True)
+            st.markdown(f"<h5 style='margin: 0;'>📄 {file_name}</h5>", unsafe_allow_html=True)
             # container.write(highlighted_chunk)
-            st.markdown(highlighted_chunk, unsafe_allow_html=True)
+            st.markdown(f"... {highlighted_chunk}...", unsafe_allow_html=True)
 
 # Add buttons to go to previous or next page
 _, col1, col2, _ = st.columns([2, 1, 1, 2])
@@ -101,4 +120,5 @@ with col2:
     if st.button("Next ⏭️", on_click=get_next_page, disabled=next_disabled):
         pass
 
-st.write(search_results)
+# st.write(search_results)
+# print()

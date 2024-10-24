@@ -70,7 +70,7 @@ def bm25_search(query, pdf_texts):
     bm25 = BM25Okapi(list(preprocessed_texts.values()))
     query_tokens = get_preprocessed_text(query)
     scores = bm25.get_scores(query_tokens)
-    
+
     results = {}
     for i, score in enumerate(scores):
         if score > 0:  # If there's a relevant score
