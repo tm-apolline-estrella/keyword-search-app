@@ -1,0 +1,6 @@
+[
+    {
+        "name": "gpt-poc-ThiningM-service-cont",
+        "imageUri": "390933285212.dkr.ecr.ap-southeast-1.amazonaws.com/gpt-poc-thinking-machines-service:latest"
+    }
+]

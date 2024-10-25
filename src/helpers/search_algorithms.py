@@ -32,7 +32,7 @@ def exact_keyword_search(query, pdf_texts):
     return results
 
 # Function to perform TF-IDF search and return text snippets
-def tfidf_search(query, pdf_texts):
+def tfidf_search(query, pdf_texts, threshold=0.05):
     original_texts = {file_name: get_original_text(text) for file_name, text in pdf_texts.items()}
     preprocessed_texts = {file_name: get_preprocessed_text(text) for file_name, text in pdf_texts.items()}
 
@@ -59,11 +59,12 @@ def tfidf_search(query, pdf_texts):
 
     results = dict(sorted(results.items(), key=lambda item: item[1]['score'], reverse=True))
     results = {key: value for key, value in results.items() if value['chunk'] != ''}
-    
+    results = {key: value for key, value in results.items() if value['score'] >= threshold and value['chunk'] != ''}
+
     return results
 
 # Function to perform BM25 search and return text snippets
-def bm25_search(query, pdf_texts):
+def bm25_search(query, pdf_texts, threshold=1.75):
     original_texts = {file_name: get_original_text(text) for file_name, text in pdf_texts.items()}
     preprocessed_texts = {file_name: get_preprocessed_text(text) for file_name, text in pdf_texts.items()}
 
@@ -86,6 +87,7 @@ def bm25_search(query, pdf_texts):
 
     results = dict(sorted(results.items(), key=lambda item: item[1]['score'], reverse=True))
     results = {key: value for key, value in results.items() if value['chunk'] != ''}
+    results = {key: value for key, value in results.items() if value['score'] >= threshold and value['chunk'] != ''}
 
     return results
 
