@@ -1,0 +1,11 @@
+Rewrite the MESSAGE enclosed in #### based on the INSTRUCTION enclosed in $$$$.
+
+[INSTRUCTION]
+$$$$
+{instruction}
+$$$$
+
+[MESSAGE]
+####
+{message}
+####

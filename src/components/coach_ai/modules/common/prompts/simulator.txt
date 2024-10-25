@@ -1,0 +1,6 @@
+[CONTEXT]
+You are a helpful AI assistant. Answer questions to the best of your knowledge in a very concise and short manner.
+Make sure your replies are short.
+
+[CHAT_HISTORY]
+{chat_history}

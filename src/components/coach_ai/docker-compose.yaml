@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  api:
+    container_name: api
+    build:
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 8008:8008
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: coach-ai-sqlserver-1
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      - '1433:1433'
+    environment:
+      # Username is 'SA'
+      SA_PASSWORD: 'Prisma1234'
+      ACCEPT_EULA: 'Y'
+    volumes:
+      - sqlserver:/var/opt/mssql
+volumes:
+  sqlserver:
