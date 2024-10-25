@@ -48,64 +48,65 @@ def traditional_keyword_search(query):
     if query == '':
         st.write(':blue[Enter a query.]')
 
-    if query != '':
-        # Perform the search based on the current query and algorithm
-        search_results = search(query, st.session_state.pdf_texts, mode=st.session_state.search_algorithm)
-        total_search_result_count = len(search_results)
+    with st.spinner(":blue[Generating search results...]"):
+        if query != '':
+            # Perform the search based on the current query and algorithm
+            search_results = search(query, st.session_state.pdf_texts, mode=st.session_state.search_algorithm)
+            total_search_result_count = len(search_results)
 
-        # Get number of search results per page
-        search_results_per_page = 15
+            # Get number of search results per page
+            search_results_per_page = 15
 
-        # Initialize session state for current page if not already done
-        if 'traditional_keyword_search_current_page' not in st.session_state:
-            st.session_state.traditional_keyword_search_current_page = 0
+            # Initialize session state for current page if not already done
+            if 'traditional_keyword_search_current_page' not in st.session_state:
+                st.session_state.traditional_keyword_search_current_page = 0
 
-        total_page_count = (total_search_result_count + search_results_per_page - 1) // search_results_per_page
+            total_page_count = (total_search_result_count + search_results_per_page - 1) // search_results_per_page
 
-        start_index = st.session_state.traditional_keyword_search_current_page * search_results_per_page
-        end_index = start_index + search_results_per_page
+            start_index = st.session_state.traditional_keyword_search_current_page * search_results_per_page
+            end_index = start_index + search_results_per_page
 
-        ### Number of Search Results
-        st.write(f":blue[{total_search_result_count} search results found.]")
+            ### Number of Search Results
+            st.write(f":blue[{total_search_result_count} search results found.]")
 
-        if search_results != {}:
-            displayed_search_results = list(search_results.items())
+            if search_results != {}:
+                displayed_search_results = list(search_results.items())
+                
+                ### Search Results
+                for file_name, details in displayed_search_results[start_index:end_index]:
+                    chunk = details['chunk']
+                    query_tokens = get_preprocessed_text(query)
+
+                    highlighted_chunk = get_highlighted_chunk(chunk, query_tokens)
+
+                    container = st.container(border=True)
+
+                    with container:
+                        st.markdown(f"<h5 style='margin: 0;'>📄 {file_name}</h5>", unsafe_allow_html=True)
+                        st.markdown(f"... {highlighted_chunk}...", unsafe_allow_html=True)
+
+            # Add buttons to go to previous or next page
+            _, col1, col2, _ = st.columns([2, 1, 1, 2])
+
+            ### Button to Previous Page
+            with col1:
+                back_disabled = st.session_state.traditional_keyword_search_current_page == 0
+                if st.button(
+                    "⏮️ Back", 
+                    key="traditional_keyword_search_previous_page", on_click=get_previous_page, 
+                    disabled=back_disabled
+                    ):
+                    pass
             
-            ### Search Results
-            for file_name, details in displayed_search_results[start_index:end_index]:
-                chunk = details['chunk']
-                query_tokens = get_preprocessed_text(query)
+            ### Button to Next Page
+            with col2:
+                next_disabled = st.session_state.traditional_keyword_search_current_page == total_page_count - 1
+                if st.button(
+                    "Next ⏭️", 
+                    key="traditional_keyword_search_next_page", 
+                    on_click=get_next_page, 
+                    disabled=next_disabled
+                    ):
+                    pass
 
-                highlighted_chunk = get_highlighted_chunk(chunk, query_tokens)
-
-                container = st.container(border=True)
-
-                with container:
-                    st.markdown(f"<h5 style='margin: 0;'>📄 {file_name}</h5>", unsafe_allow_html=True)
-                    st.markdown(f"... {highlighted_chunk}...", unsafe_allow_html=True)
-
-        # Add buttons to go to previous or next page
-        _, col1, col2, _ = st.columns([2, 1, 1, 2])
-
-        ### Button to Previous Page
-        with col1:
-            back_disabled = st.session_state.traditional_keyword_search_current_page == 0
-            if st.button(
-                "⏮️ Back", 
-                key="traditional_keyword_search_previous_page", on_click=get_previous_page, 
-                disabled=back_disabled
-                ):
-                pass
-        
-        ### Button to Next Page
-        with col2:
-            next_disabled = st.session_state.traditional_keyword_search_current_page == total_page_count - 1
-            if st.button(
-                "Next ⏭️", 
-                key="traditional_keyword_search_next_page", 
-                on_click=get_next_page, 
-                disabled=next_disabled
-                ):
-                pass
-
-    # st.write(search_results)
+        # st.write(search_results)
