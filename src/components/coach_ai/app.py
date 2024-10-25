@@ -56,7 +56,8 @@ def coach_ai_search(query):
         st.write(full_text)
 
     ### Title
-    st.title("CoachAI Search")
+    # st.title("CoachAI Search")
+    st.markdown("<h1 style='font-size: 38px;'>CoachAI Search</h1>", unsafe_allow_html=True)
 
     # Initialize session state variables if they don't exist
     if query == '':
@@ -119,7 +120,7 @@ def coach_ai_search(query):
                     search_result_id += 1
 
             # Add buttons to go to previous or next page
-            _, col1, col2, _ = st.columns([2, 1, 1, 2])
+            _, col1, col2, _ = st.columns([2, 1.5, 1.5, 2])
 
             ### Button to Previous Page
             with col1:
