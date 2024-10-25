@@ -15,7 +15,7 @@ def get_highlighted_chunk(chunk, query_tokens):
     for query_token in query_tokens:
         for chunk_token in chunk_tokens:
             if (query_token.lower() == chunk_token.lower()) or (query_token.lower() in chunk_token.lower()):
-                print(query_token, chunk_token)
+                # print(query_token, chunk_token)
                 highlighted_chunk = re.sub(
                     r'\b' + re.escape(chunk_token) + r'\b', 
                     f"<span style='color:red;'><strong>{chunk_token}</strong></span>",

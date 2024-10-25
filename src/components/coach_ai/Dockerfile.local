@@ -1,0 +1,54 @@
+# Start from the Python 3.9 image
+FROM python:3.9
+
+# Declare build arguments
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
+# Set environment variables
+ENV PYTHONFAULTHANDLER=1 \
+    PYTHONHASHSEED=random \
+    PYTHONUNBUFFERED=1 \
+    PIP_DEFAULT_TIMEOUT=100 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    POETRY_VERSION=1.4.0 \
+    SSL_CERT_DIR=/etc/ssl/certs \
+    LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+# Install necessary packages for Azure Speech SDK
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libssl-dev \
+    ca-certificates \
+    libasound2 \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install OpenSSL 1.x from sources if needed
+# (Check the version in the base image and install if it's not 1.x)
+RUN wget -O - https://www.openssl.org/source/openssl-3.2.0.tar.gz | tar zxf - \
+    && cd openssl-3.2.0 \
+    && ./config --prefix=/usr/local \
+    && make -j $(nproc) \
+    && make install_sw install_ssldirs \
+    && ldconfig -v
+
+# Install poetry
+RUN pip install "poetry==$POETRY_VERSION" && poetry config virtualenvs.create false
+
+# Copy the Python project files
+WORKDIR /tmp
+COPY pyproject.toml poetry.lock ./
+
+# Install Python dependencies using poetry
+RUN poetry install --no-ansi --no-interaction
+
+# Set the working directory for the application
+WORKDIR /app
+
+# Expose the port the app runs on
+EXPOSE 8008
+
+# Set the entrypoint for the container
+ENTRYPOINT [ "./docker-entrypoint.sh" ]
