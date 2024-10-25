@@ -31,7 +31,8 @@ def traditional_keyword_search(query):
 
     ### Title
     with col1:
-        st.title("Keyword Search")
+        # st.title("Keyword Search")
+        st.markdown("<h1 style='font-size: 38px;'>Keyword Search</h1>", unsafe_allow_html=True)
 
     ### Search Algorithm Select Box
     with col3:
@@ -48,7 +49,7 @@ def traditional_keyword_search(query):
     if query == '':
         st.write(':blue[Enter a query.]')
 
-    with st.spinner(":blue[Generating search results...]"):
+    with st.spinner(":blue[Searching...]"):
         if query != '':
             # Perform the search based on the current query and algorithm
             search_results = search(query, st.session_state.pdf_texts, mode=st.session_state.search_algorithm)
@@ -86,7 +87,7 @@ def traditional_keyword_search(query):
                         st.markdown(f"... {highlighted_chunk}...", unsafe_allow_html=True)
 
             # Add buttons to go to previous or next page
-            _, col1, col2, _ = st.columns([2, 1, 1, 2])
+            _, col1, col2, _ = st.columns([2, 1.5, 1.5, 2])
 
             ### Button to Previous Page
             with col1:
